@@ -1,0 +1,81 @@
+# Copyright (c) 2022 AIRCAS
+
+
+import("//build/ohos.gni")
+
+# This is the configuration needed to use tree.
+config("tree_config") {
+  include_dirs = [
+    "debian",
+    "doc",
+  ]
+  cflags = [ 
+      "-Wno-unused-parameter" ,
+      "-Wno-incompatible-pointer-types",
+      "-D_GNU_SOURCE",
+      "-D_POSIX_C_SOURCE=200112",  
+  ]
+}
+
+common_source = [
+      "color.c",
+      "file.c",
+      "filter.c",
+      "hash.c",
+      "html.c",
+      "info.c",
+      "json.c",
+      "list.c",
+      "strverscmp.c",
+      "tree.c",
+      "unix.c",
+      "xml.c",
+]
+
+# This is the configuration used to build tree itself.
+# It should not be needed outside of this library.
+config("tree_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ ]
+}
+
+ohos_source_set("tree_source") {
+  configs = [ ":tree_config" ]
+  sources = common_source
+
+  if (is_ohos) {
+  sources += [ ]
+  } 
+}
+
+
+# target files
+
+ohos_static_library("tree_static") {
+  deps = [ ":tree_source" ]
+  public_configs = [ ":tree_config" ]
+}
+ohos_shared_library("tree_share") {
+  deps = [ ":tree_source" ]
+  public_configs = [ ":tree_config" ]
+}
+
+ohos_executable("tree") {
+  include_dirs = [
+    "debian",
+    "doc",
+  ]
+  deps = [ ":tree_source" ]
+  public_configs = [ ":tree_config" ]
+}
+
+
+
+
+
+
+
+
+
+
+
