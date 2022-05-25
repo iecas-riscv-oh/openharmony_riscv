@@ -1,0 +1,30 @@
+import("//build/ohos.gni")
+
+config("glog_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "src" ]
+  cflags = [ 
+    "-Wno-unused-parameter" ,
+    "-Wno-incompatible-pointer-types",
+    "-D_GNU_SOURCE",
+    "-D_POSIX_C_SOURCE=200112",  
+  ]
+
+}
+ohos_shared_library("glog") {
+  sources = [
+    "src/demangle.cc",
+    "src/logging.cc",
+    "src/raw_logging.cc",
+    "src/signalhandler.cc",
+    "src/symbolize.cc",
+    "src/utilities.cc",
+    "src/vlog_is_on.cc",
+  ]
+  public_configs = [ ":glog_config" ]
+ 
+  if (is_ohos) {
+    defines = [ "HAVE_SYSCALL_H" ]
+    cflags_cc = [ "-Wno-sign-compare" ]
+  }
+}

@@ -1,0 +1,30 @@
+import("//build/ohos.gni")
+
+config("gflags_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ 
+    "build/include", 
+    "build/include/gflags",
+    "src",
+  ]
+  cflags = [ 
+    "-Wno-unused-parameter" ,
+    "-Wno-incompatible-pointer-types",
+    "-D_GNU_SOURCE",
+    "-D_POSIX_C_SOURCE=200112",
+  ]
+}
+
+ohos_shared_library("gflags") {
+  sources = [
+    "src/gflags.cc",
+    "src/gflags_completions.cc",
+    "src/gflags_reporting.cc",
+  ]
+  public_configs = [ ":gflags_config" ]
+  
+  if (is_ohos) {
+    defines = [ "HAVE_SYSCALL_H" ]
+    cflags_cc = [ "-Wno-sign-compare" ]
+  }
+}
