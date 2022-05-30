@@ -1,0 +1,83 @@
+#Copyright (c) 2022 AIRCAS
+
+
+import("//build/ohos.gni")
+
+# This is the configuration needed to use rapidjson.
+config("rapidjson_config") {
+  include_dirs = [
+    "../example",
+    "../include",
+  ]
+  cflags = [ 
+      "-Wno-unused-parameter" ,
+      "-Wno-incompatible-pointer-types",
+      "-D_GNU_SOURCE",
+      "-D_POSIX_C_SOURCE=200112",  
+  ]
+}
+
+common_source = [
+      "capitalize.cpp",
+      "condense.cpp",
+      "filterkey.cpp",
+      "filterkeydom.cpp",
+      "jsonx.cpp",
+      "lookaheadparser.cpp",
+      "messagereader.cpp",
+      "parsebyparts.cpp",
+      "pretty.cpp",
+      "prettyauto.cpp",
+      "schemavalidator.cpp",
+      "serialize.cpp",
+      "simpledom.cpp",
+      "simplereader.cpp",
+      "simplepullreader.cpp",
+      "simplewriter.cpp",
+      "sortkeys.cpp",
+      "tutorial.cpp",
+]
+
+# This is the configuration used to build rapidjson itself.
+# It should not be needed outside of this library.
+config("rapidjson_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ ]
+}
+
+ohos_source_set("rapidjson_source") {
+  configs = [ ":rapidjson_config" ]
+  sources = common_source
+
+  if (is_ohos) {
+  sources += [ ]
+  } 
+}
+
+
+# target files
+
+ohos_static_library("rapidjson_static") {
+  include_dirs = [
+    "example",
+    "include",
+  ]
+  deps = [ ":rapidjson_source" ]
+  public_configs = [ ":rapidjson_config" ]
+}
+ohos_shared_library("rapidjson_share") {
+  include_dirs = [
+    "example",
+    "include",
+  ]
+  deps = [ ":rapidjson_source" ]
+  public_configs = [ ":rapidjson_config" ]
+}
+ohos_executable("rapidjson") {
+  include_dirs = [
+    "example",
+    "include",
+  ]
+  deps = [ ":rapidjson_source" ]
+  public_configs = [ ":rapidjson_config" ]
+}
