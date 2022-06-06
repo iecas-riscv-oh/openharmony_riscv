@@ -1,0 +1,98 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+
+import("//build/ohos.gni")
+
+common_source = [
+  "mdb_copy.c",
+  "mdb_drop.c",
+  "mdb_dump.c",
+  "mdb_load.c",
+  "mdb_stat.c",
+  "mdb.c",
+  "midl.c",
+  "mtest.c",
+  "mtest2.c",
+  "mtest3.c",
+  "mtest4.c",
+  "mtest5.c",
+  "mtest6.c",
+]
+
+# This is the configuration needed to use lmdb.
+config("lmdb_config") {
+  include_dirs = [
+    "include",
+    "src",
+    "src/unix",
+  ]
+  cflags = [ "-Wno-unused-parameter" ]
+  if (is_linux || is_ohos) {
+    cflags += [
+      "-Wno-incompatible-pointer-types",
+      "-D_GNU_SOURCE",
+      "-D_POSIX_C_SOURCE=200112",
+    ]
+  } else if (is_mingw || is_win) {
+    cflags += [
+      "-Wno-missing-braces",
+      "-Wno-implicit-function-declaration",
+      "-Wno-error=return-type",
+      "-Wno-error=sign-compare",
+      "-Wno-error=unused-variable",
+      "-Wno-error=unknown-pragmas",
+      "-Wno-unused-variable",
+    ]
+    defines = [
+      "WIN32_LEAN_AND_MEAN",
+      "_WIN32_WINNT=0x0600",
+    ]
+
+  }
+}
+
+# This is the configuration used to build lmdb itself.
+# It should not be needed outside of this library.
+config("lmdb_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "src",
+    "src/unix",
+  ]
+}
+
+ohos_source_set("lmdb_source") {
+  configs = [ ":lmdb_config" ]
+  
+
+  if  (is_ohos) {
+    sources = common_source
+  } 
+}
+
+ohos_static_library("lmdb_static") {
+  deps = [ ":lmdb_source" ]
+  public_configs = [ ":lmdb_config" ]
+}
+ohos_shared_library("lmdb") {
+  deps = [ ":lmdb_source" ]
+  public_configs = [ ":lmdb_config" ]
+}
