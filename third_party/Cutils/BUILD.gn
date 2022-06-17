@@ -1,0 +1,64 @@
+import("//build/ohos.gni")
+
+# This is the configuration needed to use Cutils.
+config("Cutils_config") {
+  include_dirs = [
+    ".",
+  ]
+  cflags = [ 
+      "-Wno-unused-parameter" ,
+      "-Wno-incompatible-pointer-types",
+      "-D_GNU_SOURCE",
+      "-D_POSIX_C_SOURCE=200112",  
+  ]
+}
+# The template aircas_ohos_prebuit_include is defined in //build/templates/cxx/prebuilt.gni
+  
+sources = [
+   "./iosched_policy.h",
+   "./qtaguid.h",
+   "./android_get_control_file.h",
+   "./klog.h",
+   "./record_stream.h",
+   "./android_reboot.h",
+   "./list.h",
+   "./sched_policy.h",
+   "./ashmem.h",
+   "./log.h",
+   "./sockets.h",
+   "./atomic.h",
+   "./memory.h",
+   "./str_parms.h",
+   "./bitops.h",
+   "./misc.h",
+   "./threads.h",
+   "./compiler.h",
+   "./multiuser.h",
+   "./trace.h",
+   "./config_utils.h",
+   "./native_handle.h",
+   "./uevent.h",
+   "./fs.h",
+   "./partition_utils.h",
+   "./hashmap.h",
+   "./properties.h",
+ ] 
+ foreach (cutils_target_name, sources) {
+   aircas_ohos_prebuilt_include(cutils_target_name){
+     source = cutils_target_name
+     module_type = "include/Cutils"      
+     public_configs = [ ":Cutils_config" ] 
+     install_images = [
+       "system",
+       "updater",
+     ]
+   }
+ }
+
+group ("Cutils_headers_copy") {
+    deps = []
+    foreach (cutils_target_name, sources){
+        deps += [":"+cutils_target_name]
+    }
+}
+ 

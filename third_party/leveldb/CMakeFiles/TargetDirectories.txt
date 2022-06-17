@@ -1,0 +1,2 @@
+/home/slx/riscv/OpenHarmony/third_party/leveldb/CMakeFiles/edit_cache.dir
+/home/slx/riscv/OpenHarmony/third_party/leveldb/CMakeFiles/rebuild_cache.dir

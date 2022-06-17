@@ -1,0 +1,152 @@
+#Copyright (c) 2022 Huawei Device Co., Ltd.
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
+import("//build/ohos.gni")
+import("//developtools/profiler/build/config.gni")
+
+config("leveldb_config") {
+  cflags = [
+    "-DLEVELDB_PLATFORM_POSIX=1",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-O3",
+    "-DNDEBUG",
+    "-mno-relax",
+  ]
+}
+
+ohos_static_library("libleveldb") {
+  sources = [
+    "db/builder.cc",
+    "db/c.cc",
+    "db/db_impl.cc",
+    "db/db_iter.cc",
+    "db/dbformat.cc",
+    "db/dumpfile.cc",
+    "db/filename.cc",
+    "db/log_reader.cc",
+    "db/log_writer.cc",
+    "db/memtable.cc",
+    "db/repair.cc",
+    "db/table_cache.cc",
+    "db/version_edit.cc",
+    "db/version_set.cc",
+    "db/write_batch.cc",
+    "table/block.cc",
+    "table/block_builder.cc",
+    "table/filter_block.cc",
+    "table/format.cc",
+    "table/iterator.cc",
+    "table/merger.cc",
+    "table/table.cc",
+    "table/table_builder.cc",
+    "table/two_level_iterator.cc",
+    "util/arena.cc",
+    "util/bloom.cc",
+    "util/cache.cc",
+    "util/coding.cc",
+    "util/comparator.cc",
+    "util/crc32c.cc",
+    "util/env.cc",
+    "util/env_posix.cc",
+    "util/filter_policy.cc",
+    "util/hash.cc",
+    "util/logging.cc",
+    "util/options.cc",
+    "util/status.cc",
+    "helpers/memenv/memenv.cc",
+  ]
+  include_dirs = [
+    ".",
+    "db/",
+    "table/",
+    "util/",
+    "include/",
+    "port/",
+  ]
+  configs = [ ":leveldb_config" ]
+  public_configs = [ ":leveldb_config" ]
+  subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+  part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+ohos_executable("leveldbutil") {
+  sources = [
+    "db/leveldbutil.cc",
+  ]
+  include_dirs = [
+    ".",
+    "include",
+  ]
+  deps = [
+    "//third_party/leveldb:libleveldb",
+  ]
+  # static_link = true
+}
+
+
+ohos_static_library("benchmark") {
+  sources = [
+    "third_party/benchmark/src/benchmark.cc",
+    "third_party/benchmark/src/benchmark_api_internal.cc",
+    "third_party/benchmark/src/benchmark_name.cc",
+    "third_party/benchmark/src/benchmark_register.cc",
+    "third_party/benchmark/src/benchmark_runner.cc",
+    "third_party/benchmark/src/colorprint.cc",
+    "third_party/benchmark/src/commandlineflags.cc",
+    "third_party/benchmark/src/complexity.cc",
+    "third_party/benchmark/src/console_reporter.cc",
+    "third_party/benchmark/src/counter.cc",
+    "third_party/benchmark/src/csv_reporter.cc",
+    "third_party/benchmark/src/json_reporter.cc",
+    "third_party/benchmark/src/perf_counters.cc",
+    "third_party/benchmark/src/reporter.cc",
+    "third_party/benchmark/src/sleep.cc",
+    "third_party/benchmark/src/statistics.cc",
+    "third_party/benchmark/src/string_util.cc",
+    "third_party/benchmark/src/sysinfo.cc",
+    "third_party/benchmark/src/timers.cc",
+  ]
+  include_dirs = [
+    "third_party/benchmark/include",
+    "third_party/benchmark/build",
+    "third_party/leveldb/third_party/benchmark/build/include",
+    "third_party/leveldb/third_party/benchmark/build/include/benchmark",
+  ]
+  subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+  part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+ohos_static_library("benchmark_main") {
+  sources = [
+    "third_party/benchmark/src/benchmark_main.cc",
+  ]
+  include_dirs = [
+    "third_party/benchmark/include",
+    "third_party/benchmark/build",
+    "third_party/leveldb/third_party/benchmark/build/include",
+    "third_party/leveldb/third_party/benchmark/build/include/benchmark",
+  ]
+  subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+  part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+group("leveldb") {
+  deps = [
+    ":libleveldb",
+    ":leveldbutil",
+    ":benchmark",
+    ":benchmark_main",
+  ]
+
+}
