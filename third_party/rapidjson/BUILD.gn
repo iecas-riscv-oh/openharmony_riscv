@@ -45,8 +45,11 @@ template("aircas_ohos_prebuilt_include_rapidjson") {
 # This is the configuration needed to use rapidjson.
 config("rapidjson_config") {
   include_dirs = [
-    "example",
-    "include",
+    "./example",
+    "./include/rapidjson",
+    "./include/rapidjson/error",
+    "./include/rapidjson/internal",
+    "./include/rapidjson/msinttypes",
     ".",
   ]
   cflags = [ 
@@ -57,87 +60,91 @@ config("rapidjson_config") {
   ]
 }
 
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy1"){     
-  sources = 
-    "./include/rapidjson/allocators.h"      
+
+
+sources = [
+    "./include/rapidjson/allocators.h",
+    "./include/rapidjson/cursorstreamwrapper.h",
+    "./include/rapidjson/document.h",
+    "./include/rapidjson/encodedstream.h",
+    "./include/rapidjson/encodings.h",
+    "./include/rapidjson/filereadstream.h",
+    "./include/rapidjson/filewritestream.h",
+    "./include/rapidjson/fwd.h",
+    "./include/rapidjson/istreamwrapper.h",
+    "./include/rapidjson/memorybuffer.h",
+    "./include/rapidjson/memorystream.h",
+    "./include/rapidjson/ostreamwrapper.h",
+    "./include/rapidjson/pointer.h",
+    "./include/rapidjson/prettywriter.h",
+    "./include/rapidjson/rapidjson.h",
+    "./include/rapidjson/reader.h",
+    "./include/rapidjson/schema.h",
+    "./include/rapidjson/stream.h",
+    "./include/rapidjson/stringbuffer.h",
+    "./include/rapidjson/uri.h",
+    "./include/rapidjson/writer.h",
+    "./include/rapidjson/error/en.h",     
+    "./include/rapidjson/error/error.h",
+    "./include/rapidjson/internal/biginteger.h",     
+    "./include/rapidjson/internal/clzll.h",
+    "./include/rapidjson/internal/diyfp.h",     
+    "./include/rapidjson/internal/dtoa.h",
+    "./include/rapidjson/internal/ieee754.h",     
+    "./include/rapidjson/internal/itoa.h",
+    "./include/rapidjson/internal/meta.h",     
+    "./include/rapidjson/internal/pow10.h",
+    "./include/rapidjson/internal/regex.h",
+    "./include/rapidjson/internal/stack.h",
+    "./include/rapidjson/internal/strfunc.h",
+    "./include/rapidjson/internal/strtod.h",
+    "./include/rapidjson/internal/swap.h",
+    "./include/rapidjson/msinttypes/inttypes.h",
+    "./include/rapidjson/msinttypes/stdint.h",
+
+]
+# headers_error = [
+#     "./include/rapidjson/error/en.h",     
+#     "./include/rapidjson/error/error.h",
+# ]
+# headers_internal = [
+#     "./include/rapidjson/internal/biginteger.h",     
+#     "./include/rapidjson/internal/clzll.h",
+#     "./include/rapidjson/internal/diyfp.h",     
+#     "./include/rapidjson/internal/dtoa.h",
+#     "./include/rapidjson/internal/ieee754.h",     
+#     "./include/rapidjson/internal/itoa.h",
+#     "./include/rapidjson/internal/meta.h",     
+#     "./include/rapidjson/internal/pow10.h",
+#     "./include/rapidjson/internal/regex.h",
+#     "./include/rapidjson/internal/stack.h",
+#     "./include/rapidjson/internal/strfunc.h",
+#     "./include/rapidjson/internal/strtod.h",
+#     "./include/rapidjson/internal/swap.h",
+# ]
+# headers_msinttypes = [
+#     "./include/rapidjson/msinttypes/inttypes.h",
+#     "./include/rapidjson/msinttypes/stdint.h",
+# ]
+#原Cmakelists结构是放置在不同目录下
+group("rapidjson_headers_copy"){
+  deps = []
+  foreach(copy_name,sources){
+    deps += [":"+copy_name]
+  }
 }
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy2"){ 
-  sources =    
-    "./include/rapidjson/cursorstreamwrapper.h"
+foreach(copy_name,sources){
+    if (sources != []){
+    aircas_ohos_prebuilt_include_rapidjson(copy_name){     
+    sources = copy_name      }
+    #print (copy_name)
+    module_type = "include/rapidjson"
+    }
 }
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy3"){   
-  sources = 
-    "./include/rapidjson/prettywriter.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy4"){
-  sources = 
-    "./include/rapidjson/document.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy5"){
-  sources = 
-    "./include/rapidjson/encodedstream.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy6"){
-  sources = 
-    "./include/rapidjson/encodings.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy7"){
-  sources = 
-    "./include/rapidjson/filereadstream.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy8"){
-  sources = 
-    "./include/rapidjson/filewritestream.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy9"){
-  sources = 
-    "./include/rapidjson/fwd.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy10"){
-  sources = 
-    "./include/rapidjson/istreamwrapper.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy11"){
-  sources = 
-    "./include/rapidjson/memorybuffer.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy12"){
-  sources = 
-    "./include/rapidjson/memorystream.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy13"){
-  sources = 
-    "./include/rapidjson/ostreamwrapper.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy14"){
-  sources = 
-    "./include/rapidjson/pointer.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy15"){
-  sources = 
-    "./include/rapidjson/rapidjson.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy16"){
-  sources = 
-    "./include/rapidjson/reader.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy17"){
-  sources = 
-    "./include/rapidjson/schema.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy18"){
-  sources = 
-    "./include/rapidjson/stream.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy19"){
-  sources = 
-    "./include/rapidjson/stringbuffer.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy20"){
-  sources = 
-    "./include/rapidjson/uri.h"
-}
-aircas_ohos_prebuilt_include_rapidjson("rapidjson_headers_copy21"){
-  sources = 
-    "./include/rapidjson/writer.h"
-}
+
+
+
+
+
+
+

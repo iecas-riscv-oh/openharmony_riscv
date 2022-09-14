@@ -1,0 +1,133 @@
+# Copyright (c) 2022 AIRCAS
+
+import("//build/ohos.gni")
+import("//developtools/profiler/build/config.gni")
+# template("aircas_ohos_prebuilt_include") {
+#   assert(defined(invoker.sources), "sources must be defined for ${target_name}.")
+#   ohos_copy(target_name) {
+#     forward_variables_from(invoker,
+#                            [
+#                              "testonly",
+#                              "visibility",
+
+#                              "deps",
+#                              "public_configs",
+#                              "subsystem_name",
+#                              "part_name",
+
+#                              # For generate_module_info
+#                              "install_images",
+#                              "module_install_dir",
+#                              "relative_install_dir",
+#                              "symlink_target_name",
+
+#                              # Open source license related
+#                              "license_file",
+#                              "license_as_sources",
+#                            ])
+#     set_sources_assignment_filter([])
+#     sources = [ invoker.sources ]
+#     outputs = [ "${target_out_dir}/{{source_file_part}}" ]
+#     # outputs = [ "${target_out_dir}/${invoker.sources}" ]
+# #    print ("******ohos_prebuilt_include_print*********")
+# #    print (outputs)
+#     module_type = "include"
+#     prebuilt = true
+#     install_enable = true
+#     if (defined(invoker.install_enable)) {
+#       install_enable = invoker.install_enable
+#     }
+#   }
+# }
+config("handy_config") {
+  cflags = [
+    "-D_GNU_SOURCE",
+    "-D_HAS_EXCEPTIONS=0",
+    "-DHAVE_CONFIG_H",
+    "-Wno-macro-redefined",
+  ]
+  defines = [ "OS_LINUX", 
+#   "__USE_MISC",
+  ]
+  include_dirs = [
+    ".",
+    "./handy",
+  ]
+}
+
+
+common_source = [
+    "./handy/daemon.cc",
+    "./handy/net.cc",
+    "./handy/codec.cc",
+    "./handy/http.cc",
+    "./handy/conn.cc",
+    "./handy/poller.cc",
+    "./handy/udp.cc",
+    "./handy/threads.cc",
+    "./handy/file.cc",
+    "./handy/util.cc",
+    "./handy/conf.cc",
+    "./handy/stat-svr.cc",
+    "./handy/port_posix.cc",
+    "./handy/event_base.cc",
+    "./handy/logging.cc",
+]
+# sources = [
+#     "./handy/codec.h",
+#     "./handy/conf.h",
+#     "./handy/conn.h",
+#     "./handy/daemon.h",
+#     "./handy/event_base.h",
+#     "./handy/file.h",
+#     "./handy/handy.h",
+#     "./handy/handy-imp.h",
+#     "./handy/http.h",
+#     "./handy/logging.h",
+#     "./handy/net.h",
+#     "./handy/poller.h",
+#     "./handy/port_posix.h",
+#     "./handy/slice.h",
+#     "./handy/stat-svr.h",
+#     "./handy/status.h",
+#     "./handy/threads.h",
+#     "./handy/udp.h",
+#     "./handy/util.h",
+# ]
+# sources = []
+# sources = handy_headers
+# group("handy_headers_copy"){
+#   deps = []
+#   foreach(copy_name,sources){
+#     deps += [":"+copy_name]
+#   }
+# }
+
+# foreach(copy_name,sources){
+#     aircas_ohos_prebuilt_include(copy_name){   
+#     sources = []  
+#     sources = copy_name      
+#     # module_type = "include/handy"
+#     }
+# }
+ohos_static_library("libhandy_static") {
+   configs = [ ":handy_config" ]
+   public_configs = [ ":handy_config" ]
+   sources = []
+   sources += common_source
+}
+ohos_shared_library("libhandy_shared"){
+    output_prefix_override = true
+    output_name = "libhandy"
+    output_extension = "so"
+    configs = [ ":handy_config" ]
+    public_configs = [ ":handy_config" ]
+    sources = []
+    sources += common_source
+}
+ohos_executable("libhandy_test") {
+  sources = [ "./examples/echo.cc" ]
+  include_dirs = [ "./handy" ]
+
+  deps = [ "//third_party/handy:libhandy_static" ]
+}
