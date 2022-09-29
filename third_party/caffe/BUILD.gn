@@ -1,0 +1,150 @@
+import("//build/ohos.gni")
+import("//developtools/profiler/build/config.gni")
+
+# 编译CFLAGS标记和需要链接的库
+config("caffe_cflag_config") {
+    cflags = [
+        "-fPIC",
+        "-Wall",
+        "-Wno-sign-compare",
+        "-Wno-uninitialized",
+    ]
+    ldflags = [
+
+    ]
+}
+
+# 需要包含的头文件
+config("caffe_config") {
+    include_dirs = [
+
+    ]
+}
+
+# 需要包含的源文件
+ohos_source_set("convert_imageset_sources") {
+    sources = [
+        "//third_party/caffe/src/caffe/internal_thread.cpp",
+        "//third_party/caffe/src/caffe/layer_factory.cpp",
+    ]
+}
+
+# static liarary
+ohos_static_library("gtest") {
+    sources = [
+        "src/gtest/gtest.h",
+        "src/gtestgtest-all.cpp",
+    ]
+    include_dirs = ["src/gtest/",]
+}
+
+ohos_static_library("caffeproto") {
+    sources = [
+        "build/src/caffe/proto/caffe.pb.cc",
+    ]
+    include_dirs = ["build/src/caffe/proto/",]
+    deps = ["//third_party/protobuf:protoc_lib"]
+}
+
+ohos_static_library("caffe") {
+    sources = [
+        "src/blob.cpp",
+        "src/common.cpp",
+        "src/data_transformer.cpp",
+        "src/internal_thread.cpp",
+        "src/layer_factory.cpp",
+        "src/layer.cpp",
+        "src/net.cpp",
+        "src/parallel.cpp",
+        "src/solver.cpp",
+        "src/syncedmem.cpp",
+    ]
+    include_dirs = ["src/",]
+    deps = ["//third_party/protobuf:protoc_lib"]
+    subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+    part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+
+
+# 生成动态库
+
+ohos_shared_library("libcaffe") {
+    deps = [:""] # 依赖的源文件
+    public_configs = [:"caffe_config"] # 依赖的头文件配置信息
+    configs = [:"caffe_cflag_config"] # 依赖的CFLAGS配置信息
+    part_name = "caffe_lib"
+}
+
+# executable (.bin)
+
+ohos_executable("compute_image_mean") {
+    sources = [ "tools/compute_image_mean.cpp" ]
+    include_dirs = [
+        "tools/",
+        "build/caffe/proto/",
+        "build/caffe/util/",
+        "//third_party/boost/boost/",
+        "//third_party/gflags/build/include/gflags/",
+        "//third_party/glog/glog/",
+    ]
+    deps = [ 
+        "//third_party/boost"boost",
+        "//third_party/gflags:gflags",
+        "//third_party/glog:glog",
+        ]
+    cflags_cc = [ "-Wno-sign-compare" ]
+    cflags = [
+      "-Wno-sign-compare",
+      "-D HAVE_PTHREAD",
+    ]
+    subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+    part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+ohos_executable("convert_imageset") {
+    sources = [ "tools/convert_imageset.cpp" ]
+    include_dirs = [
+        "tools/",
+        "build/caffe/proto/",
+        "build/caffe/util/",
+        "//third_party/boost/boost/",
+        "//third_party/gflags/build/include/gflags/",
+        "//third_party/glog/glog/",
+    ]
+    deps = [ 
+        "//third_party/boost"boost",
+        "//third_party/gflags:gflags",
+        "//third_party/glog:glog",
+        ]
+    cflags_cc = [ "-Wno-sign-compare" ]
+    cflags = [
+      "-Wno-sign-compare",
+      "-D HAVE_PTHREAD",
+    ]
+    subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+    part_name = "${OHOS_PROFILER_PART_NAME}"
+}
+
+ohos_executable("extract_features") {
+    sources = [ "tools/extract_features.cpp" ]
+    include_dirs = [
+        "tools/",
+        "include/caffe/",
+        "build/caffe/proto/",
+        "build/caffe/util/",
+        "//third_party/boost/boost/algorithm/",
+        "//third_party/protobuf/src/google/protobuf/",
+    ]
+    deps = [ 
+        "//third_party/boost"boost",
+        "//third_party/protobuc:protoc_lib",
+        ]
+    cflags_cc = [ "-Wno-sign-compare" ]
+    cflags = [
+      "-Wno-sign-compare",
+      "-D HAVE_PTHREAD",
+    ]
+    subsystem_name = "${OHOS_PROFILER_SUBSYS_NAME}"
+    part_name = "${OHOS_PROFILER_PART_NAME}"
+}
