@@ -20,79 +20,45 @@
 
 import("//build/ohos.gni")
 
-common_source = [
-  "mdb_copy.c",
-  "mdb_drop.c",
-  "mdb_dump.c",
-  "mdb_load.c",
-  "mdb_stat.c",
-  "mdb.c",
-  "midl.c",
-  "mtest.c",
-  "mtest2.c",
-  "mtest3.c",
-  "mtest4.c",
-  "mtest5.c",
-  "mtest6.c",
-]
 
 # This is the configuration needed to use lmdb.
 config("lmdb_config") {
   include_dirs = [
-    "include",
-    "src",
-    "src/unix",
+    ".",
   ]
-  cflags = [ "-Wno-unused-parameter" ]
-  if (is_linux || is_ohos) {
-    cflags += [
-      "-Wno-incompatible-pointer-types",
-      "-D_GNU_SOURCE",
-      "-D_POSIX_C_SOURCE=200112",
+  cflags = [
+    "-fPIC", 
+    "-W", 
+    "-Wall", 
+    "-Wbad-function-cast",
+    "-Wuninitialized",
+    "-Wno-unused-parameter",
     ]
-  } else if (is_mingw || is_win) {
-    cflags += [
-      "-Wno-missing-braces",
-      "-Wno-implicit-function-declaration",
-      "-Wno-error=return-type",
-      "-Wno-error=sign-compare",
-      "-Wno-error=unused-variable",
-      "-Wno-error=unknown-pragmas",
-      "-Wno-unused-variable",
+  ldflags = [
+    "-lpthread",
     ]
-    defines = [
-      "WIN32_LEAN_AND_MEAN",
-      "_WIN32_WINNT=0x0600",
-    ]
-
-  }
-}
-
-# This is the configuration used to build lmdb itself.
-# It should not be needed outside of this library.
-config("lmdb_private_config") {
-  visibility = [ ":*" ]
-  include_dirs = [
-    "include",
-    "src",
-    "src/unix",
-  ]
 }
 
 ohos_source_set("lmdb_source") {
-  configs = [ ":lmdb_config" ]
-  
-
-  if  (is_ohos) {
-    sources = common_source
-  } 
+  sources = [
+    "mdb_copy.c",
+    "mdb_drop.c",
+    "mdb_dump.c",
+    "mdb_load.c",
+    "mdb_stat.c",
+    "mdb.c",
+    "midl.c",
+    "mtest.c",
+    "mtest2.c",
+    "mtest3.c",
+    "mtest4.c",
+    "mtest5.c",
+    "mtest6.c",
+  ]
 }
 
-ohos_static_library("lmdb_static") {
+ohos_static_library("lmdb") {
   deps = [ ":lmdb_source" ]
   public_configs = [ ":lmdb_config" ]
-}
-ohos_shared_library("lmdb") {
-  deps = [ ":lmdb_source" ]
-  public_configs = [ ":lmdb_config" ]
+  # part_name = "lmdb_lib"
 }
